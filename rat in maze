@@ -1,0 +1,86 @@
+#include <iostream>
+using namespace std;
+
+bool isSafe(int **arr, int x, int y, int n) {
+    if (x >= 0 && y >= 0 && x < n && y < n && arr[x][y] == 1) {
+        return true;
+    }
+    return false;
+}
+
+bool ratinMaze(int **arr, int x, int y, int n, int **solArr) {
+    if (x == (n - 1) && y == (n - 1)) {  // Reached destination
+        solArr[x][y] = 1;
+        return true;
+    }
+
+    if (isSafe(arr, x, y, n)) {
+        solArr[x][y] = 1;  // Mark as part of solution
+
+        // Move Right
+        if (ratinMaze(arr, x + 1, y, n, solArr)) {
+            return true;
+        }
+
+        // Move Down
+        if (ratinMaze(arr, x, y + 1, n, solArr)) {
+            return true;
+        }
+
+        // Backtrack
+        solArr[x][y] = 0;
+        return false;
+    }
+
+    return false;
+}
+
+int main() {
+    int n;
+    cin >> n;
+
+    // Allocate memory for maze
+    int **arr = new int *[n];
+    for (int i = 0; i < n; i++) {
+        arr[i] = new int[n];
+    }
+
+    // Input maze
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cin >> arr[i][j];
+        }
+    }
+
+    // Allocate and initialize solution array
+    int **solArr = new int *[n];
+    for (int i = 0; i < n; i++) {
+        solArr[i] = new int[n];
+        for (int j = 0; j < n; j++) {
+            solArr[i][j] = 0;
+        }
+    }
+
+    // Solve maze
+    if (ratinMaze(arr, 0, 0, n, solArr)) {
+        // Print solution
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                cout << solArr[i][j] << " ";
+            }
+            cout << endl;
+        }
+    } else {
+        cout << "No path found" << endl;
+    }
+
+    // Free allocated memory
+    for (int i = 0; i < n; i++) {
+        delete[] arr[i];
+        delete[] solArr[i];
+    }
+    delete[] arr;
+    delete[] solArr;
+
+    return 0;
+}
